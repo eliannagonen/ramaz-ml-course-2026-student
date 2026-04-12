@@ -23,7 +23,7 @@ def flatten(nested: list[list]) -> list:
         >>> flatten([])
         []
     """
-    pass
+    return sum(nested, [])
 
 
 def most_frequent(items: list) -> object:
