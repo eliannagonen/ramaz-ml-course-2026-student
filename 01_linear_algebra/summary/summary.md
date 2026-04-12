@@ -15,7 +15,7 @@
 ## Vectors
 
 A **vector** $v \in \mathbb{R}^n$ is an ordered list of $n$ real numbers.
-$v \in \mathbb{R}^n$ means "$v$ has $n$ entries, each a real number."
+$v \in \mathbb{R}^n$ means $v$ has $n$ entries, each a real number.
 
 $$
 v = \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_n \end{bmatrix}
@@ -66,7 +66,9 @@ A **matrix** $A \in \mathbb{R}^{m \times n}$ is a rectangular array with $m$ row
 
 ### Transpose
 
-$(A^\top)_{ij} = A_{ji}$ — flip rows and columns.
+Flipping rows and columns: the $(i,j)$ entry of $A^\top$ equals the $(j,i)$ entry of $A$.
+
+$$(A^\top)_{ij} = A_{ji}$$
 
 $$\begin{bmatrix} 0 & 4 \\ 7 & 0 \\ 3 & 1 \end{bmatrix}^\top = \begin{bmatrix} 0 & 7 & 3 \\ 4 & 0 & 1 \end{bmatrix}$$
 
@@ -102,7 +104,9 @@ To rotate a 2D vector counterclockwise by angle $\theta$:
 
 $$R(\theta) = \begin{bmatrix} \cos\theta & -\sin\theta \\ \sin\theta & \cos\theta \end{bmatrix}$$
 
-Check: $R(0) = I$ (identity). $R(90\degree) = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}$.
+Check: $R(0) = I$ (identity). For $\theta = 90^\circ$:
+
+$$R(90^\circ) = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}$$
 
 ---
 
@@ -156,7 +160,7 @@ x = torch.linalg.solve(A, b)  # finds x such that A @ x == b
 
 Cosine similarity measures the angle between two vectors, ignoring their lengths:
 
-$$\text{cos\_sim}(u, v) = \frac{u \cdot v}{\|u\| \cdot \|v\|}$$
+$$\text{cos-sim}(u, v) = \frac{u \cdot v}{\|u\| \cdot \|v\|}$$
 
 - Range: $[-1, 1]$
 - $= 1$: same direction (most similar)
