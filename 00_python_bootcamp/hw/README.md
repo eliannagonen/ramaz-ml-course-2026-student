@@ -44,7 +44,7 @@ Open this folder in a GitHub Codespace (recommended) or your local editor.
 
 ### Part 1: Python Basics (`python_basics.py`) — 53 pts
 
-Implement 20 functions across five sections:
+Implement functions and class methods across five sections:
 
 | Section | Topic | Points |
 |---------|-------|--------|
@@ -74,7 +74,7 @@ Use the printed output to answer the five questions in `writeup.md`.
 
 | File | What to do |
 |------|------------|
-| `python_basics.py` | Implement all functions (look for `pass` — replace with your code) |
+| `python_basics.py` | Implement all functions (each one raises `NotImplementedError` — replace it with your code) |
 | `analysis.py` | Implement all five pandas functions |
 | `writeup.md` | Answer the five analysis questions in full sentences |
 
