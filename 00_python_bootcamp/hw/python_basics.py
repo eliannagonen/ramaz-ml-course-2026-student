@@ -23,7 +23,7 @@ def flatten(nested: list[list]) -> list:
         >>> flatten([])
         []
     """
-    pass
+    raise NotImplementedError("Implement flatten()")
 
 
 def most_frequent(items: list) -> object:
@@ -38,7 +38,7 @@ def most_frequent(items: list) -> object:
         >>> most_frequent(['a', 'b', 'a', 'c', 'a'])
         'a'
     """
-    pass
+    raise NotImplementedError("Implement most_frequent()")
 
 
 def running_average(numbers: list[float]) -> list[float]:
@@ -54,7 +54,7 @@ def running_average(numbers: list[float]) -> list[float]:
         >>> running_average([])
         []
     """
-    pass
+    raise NotImplementedError("Implement running_average()")
 
 
 def chunk(items: list, size: int) -> list[list]:
@@ -70,7 +70,7 @@ def chunk(items: list, size: int) -> list[list]:
         >>> chunk([], 4)
         []
     """
-    pass
+    raise NotImplementedError("Implement chunk()")
 
 
 def rotate(items: list, k: int) -> list:
@@ -87,7 +87,7 @@ def rotate(items: list, k: int) -> list:
         >>> rotate([1, 2, 3], 4)
         [2, 3, 1]
     """
-    pass
+    raise NotImplementedError("Implement rotate()")
 
 
 def run_length_encode(items: list) -> list[tuple]:
@@ -101,7 +101,7 @@ def run_length_encode(items: list) -> list[tuple]:
         >>> run_length_encode([])
         []
     """
-    pass
+    raise NotImplementedError("Implement run_length_encode()")
 
 
 def sliding_window(items: list, size: int) -> list[list]:
@@ -120,7 +120,7 @@ def sliding_window(items: list, size: int) -> list[list]:
         >>> sliding_window([], 2)
         []
     """
-    pass
+    raise NotImplementedError("Implement sliding_window()")
 
 
 # ── Part 2: Dictionaries ──────────────────────────────────────────────────────
@@ -135,7 +135,7 @@ def count_occurrences(items: list) -> dict:
         >>> count_occurrences([])
         {}
     """
-    pass
+    raise NotImplementedError("Implement count_occurrences()")
 
 
 def invert_dict(d: dict) -> dict:
@@ -145,7 +145,7 @@ def invert_dict(d: dict) -> dict:
         >>> invert_dict({'a': 1, 'b': 2})
         {1: 'a', 2: 'b'}
     """
-    pass
+    raise NotImplementedError("Implement invert_dict()")
 
 
 def group_by(items: list[dict], key: str) -> dict[str, list[dict]]:
@@ -163,7 +163,7 @@ def group_by(items: list[dict], key: str) -> dict[str, list[dict]]:
         >>> len(result['HR'])
         1
     """
-    pass
+    raise NotImplementedError("Implement group_by()")
 
 
 def deep_get(d: dict, path: str, default: object = None) -> object:
@@ -178,7 +178,7 @@ def deep_get(d: dict, path: str, default: object = None) -> object:
         -1
         >>> deep_get({'x': 10}, 'y')  # returns None (default)
     """
-    pass
+    raise NotImplementedError("Implement deep_get()")
 
 
 def two_sum(nums: list[int], target: int) -> tuple[int, int] | None:
@@ -197,7 +197,7 @@ def two_sum(nums: list[int], target: int) -> tuple[int, int] | None:
         >>> two_sum([1, 2, 3], 100)
         None
     """
-    pass
+    raise NotImplementedError("Implement two_sum()")
 
 
 # ── Part 3: Sets ──────────────────────────────────────────────────────────────
@@ -214,7 +214,7 @@ def find_duplicates(items: list) -> set:
         >>> find_duplicates([])
         set()
     """
-    pass
+    raise NotImplementedError("Implement find_duplicates()")
 
 
 def jaccard_similarity(a: set, b: set) -> float:
@@ -230,7 +230,7 @@ def jaccard_similarity(a: set, b: set) -> float:
         >>> jaccard_similarity(set(), set())
         0.0
     """
-    pass
+    raise NotImplementedError("Implement jaccard_similarity()")
 
 
 # ── Part 4: Higher-order functions ────────────────────────────────────────────
@@ -245,7 +245,7 @@ def apply_twice(f: Callable, x: object) -> object:
         >>> apply_twice(str.upper, 'hello')
         'HELLO'
     """
-    pass
+    raise NotImplementedError("Implement apply_twice()")
 
 
 def make_multiplier(n: float) -> Callable[[float], float]:
@@ -261,7 +261,7 @@ def make_multiplier(n: float) -> Callable[[float], float]:
         >>> triple(4)
         12.0
     """
-    pass
+    raise NotImplementedError("Implement make_multiplier()")
 
 
 def pipeline(*funcs: Callable) -> Callable:
@@ -278,7 +278,7 @@ def pipeline(*funcs: Callable) -> Callable:
         >>> pipeline()(42)
         42
     """
-    pass
+    raise NotImplementedError("Implement pipeline()")
 
 
 def memoize(f: Callable) -> Callable:
@@ -301,7 +301,7 @@ def memoize(f: Callable) -> Callable:
         >>> cached(4)   # should not increment call_count
         16
     """
-    pass
+    raise NotImplementedError("Implement memoize()")
 
 
 # ── Part 5: Classes ───────────────────────────────────────────────────────────
@@ -319,26 +319,26 @@ class Student:
 
     def average(self) -> float:
         """Return the mean of all grades. Returns 0.0 if grades is empty."""
-        pass
+        raise NotImplementedError("Implement Student.average()")
 
     def highest(self) -> float:
         """Return the highest grade. Returns 0.0 if grades is empty."""
-        pass
+        raise NotImplementedError("Implement Student.highest()")
 
     def letter_grade(self) -> str:
         """Return the letter grade for this student's average.
 
         Boundaries: A >= 90, B >= 80, C >= 70, D >= 60, F otherwise.
         """
-        pass
+        raise NotImplementedError("Implement Student.letter_grade()")
 
     def __repr__(self) -> str:
         """Return a string like: Student('Alice', avg=88.5)"""
-        pass
+        raise NotImplementedError("Implement Student.__repr__()")
 
     def __lt__(self, other: "Student") -> bool:
         """Compare students by average grade (enables sorted() and min/max)."""
-        pass
+        raise NotImplementedError("Implement Student.__lt__()")
 
 
 class Gradebook:
@@ -352,12 +352,12 @@ class Gradebook:
 
         Raises ValueError if a student with the same name already exists.
         """
-        pass
+        raise NotImplementedError("Implement Gradebook.add_student()")
 
     def top_students(self, n: int) -> list[Student]:
         """Return the n students with the highest averages, in descending order."""
-        pass
+        raise NotImplementedError("Implement Gradebook.top_students()")
 
     def class_average(self) -> float:
         """Return the mean of all student averages. Returns 0.0 if empty."""
-        pass
+        raise NotImplementedError("Implement Gradebook.class_average()")

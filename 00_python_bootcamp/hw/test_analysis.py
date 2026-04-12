@@ -207,10 +207,11 @@ class TestMostStreamedArtist:
         )
 
     def test_uses_total_not_single(self, sample_df: pd.DataFrame) -> None:
-        # Verify Artist Y (max single-song: 600) loses to Artist X (total: 2200)
+        # Artist Y has the highest single song (600M) but Artist X wins on total (2200M vs 1100M)
         result = most_streamed_artist(sample_df)
-        assert result != "Artist Y", (
-            "most_streamed_artist should sum all songs per artist, not take the single highest"
+        assert result == "Artist X", (
+            f"Artist X has 2200M total; Artist Y only has 1100M total — "
+            f"sum all songs, don't just take the highest single; got {result!r}"
         )
 
     def test_custom_data(self) -> None:

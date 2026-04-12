@@ -33,7 +33,7 @@ def load_songs(path: Path) -> pd.DataFrame:
         >>> df.dtypes["year"]
         dtype('int64')
     """
-    pass
+    raise NotImplementedError("Implement load_songs()")
 
 
 def top_charting_songs(df: pd.DataFrame, n: int = 10) -> pd.DataFrame:
@@ -53,7 +53,7 @@ def top_charting_songs(df: pd.DataFrame, n: int = 10) -> pd.DataFrame:
         >>> top["streams_millions"].is_monotonic_decreasing
         True
     """
-    pass
+    raise NotImplementedError("Implement top_charting_songs()")
 
 
 def avg_weeks_by_genre(df: pd.DataFrame) -> dict[str, float]:
@@ -70,7 +70,7 @@ def avg_weeks_by_genre(df: pd.DataFrame) -> dict[str, float]:
         >>> isinstance(avgs, dict)
         True
     """
-    pass
+    raise NotImplementedError("Implement avg_weeks_by_genre()")
 
 
 def most_streamed_artist(df: pd.DataFrame) -> str:
@@ -89,7 +89,7 @@ def most_streamed_artist(df: pd.DataFrame) -> str:
         >>> isinstance(artist, str)
         True
     """
-    pass
+    raise NotImplementedError("Implement most_streamed_artist()")
 
 
 def hits_per_year(df: pd.DataFrame, max_position: int = 10) -> dict[int, int]:
@@ -109,7 +109,7 @@ def hits_per_year(df: pd.DataFrame, max_position: int = 10) -> dict[int, int]:
         >>> all(isinstance(k, int) for k in hits.keys())
         True
     """
-    pass
+    raise NotImplementedError("Implement hits_per_year()")
 
 
 # ── Main: print results for writeup.md ────────────────────────────────────────
