@@ -3,8 +3,7 @@
 Part 1: Pure-Python implementations (no torch, no numpy).
   Vectors are list[float]; matrices are list[list[float]] (row-major order).
 
-Part 2: PyTorch implementations.
-  Same math, but expressed with torch operations — no manual loops.
+Part 2: PyTorch implementations of more advanced tensor operations — no manual loops.
 
 Run tests:   uv run pytest
 Check score: uv run python score.py
@@ -238,160 +237,80 @@ def matrix_transpose(A: list[list[float]]) -> list[list[float]]:
 # ── Part 2: PyTorch Tensors ───────────────────────────────────────────────────
 
 
-def tensor_dot_product(u: torch.Tensor, v: torch.Tensor) -> float:
-    """Compute the dot product of two 1-D tensors.
+def batch_dot(U: torch.Tensor, V: torch.Tensor) -> torch.Tensor:
+    """Compute the dot product of each corresponding row pair.
+
+    Given two matrices U and V of shape (m, n), entry i of the result
+    is the dot product of row i of U with row i of V.
 
     Args:
-        u: 1-D tensor.
-        v: 1-D tensor, same length as u.
+        U: 2-D tensor of shape (m, n).
+        V: 2-D tensor of shape (m, n), same shape as U.
 
     Returns:
-        A Python float — the dot product.
+        1-D tensor of shape (m,) — one scalar per row pair.
 
     Example:
-        >>> tensor_dot_product(torch.tensor([1.0, 2.0]), torch.tensor([3.0, 4.0]))
-        11.0
+        >>> U = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
+        >>> V = torch.tensor([[5.0, 6.0], [7.0, 8.0]])
+        >>> batch_dot(U, V)
+        tensor([17., 53.])  # 1*5+2*6=17, 3*7+4*8=53
 
     Hint:
-        The reference card shows both the relevant function and the conversion
-        step needed to return a Python float.
+        torch.dot only works on 1-D tensors. Think about how to compute
+        all the element-wise products at once, then how to collapse them
+        into one number per row.
     """
-    raise NotImplementedError("Implement tensor_dot_product()")
+    raise NotImplementedError("Implement batch_dot()")
 
 
-def tensor_magnitude(v: torch.Tensor) -> float:
-    """Compute the Euclidean (L2) norm of a tensor.
+def polynomial_features(x: torch.Tensor, degree: int) -> torch.Tensor:
+    """Build a polynomial feature matrix from a 1-D tensor.
+
+    Given a vector x of length n and an integer degree d, return an
+    (n, d+1) matrix where column j contains x raised to the power j.
+    Column 0 is all ones (x^0), column 1 is x, column 2 is x^2, etc.
+
+    This is called the Vandermonde matrix and is used in polynomial
+    regression to fit degree-d curves to data.
 
     Args:
-        v: 1-D tensor.
+        x: 1-D tensor of length n.
+        degree: Non-negative integer — the highest power to include.
 
     Returns:
-        A Python float — the L2 norm of v.
+        2-D tensor of shape (n, degree + 1).
 
     Example:
-        >>> tensor_magnitude(torch.tensor([3.0, 4.0]))
-        5.0
+        >>> x = torch.tensor([2.0, 3.0])
+        >>> polynomial_features(x, degree=2)
+        tensor([[1., 2., 4.],
+                [1., 3., 9.]])
+        # col 0: x^0=[1,1], col 1: x^1=[2,3], col 2: x^2=[4,9]
 
     Hint:
-        Check the PyTorch cheat sheet in the reference card — the return type
-        matters here.
+        You need to raise x to each power from 0 to degree. Look at
+        torch.arange to generate the exponents. Think about whether you
+        can broadcast x and the exponent vector against each other —
+        what shapes would make that work?
     """
-    raise NotImplementedError("Implement tensor_magnitude()")
-
-
-def tensor_normalize(v: torch.Tensor) -> torch.Tensor:
-    """Return the unit vector in the same direction as v.
-
-    Args:
-        v: 1-D tensor.
-
-    Returns:
-        A tensor with magnitude 1 pointing in the same direction as v.
-
-    Raises:
-        ValueError: If v is the zero vector.
-
-    Example:
-        >>> tensor_normalize(torch.tensor([3.0, 4.0]))
-        tensor([0.6000, 0.8000])
-
-    Hint:
-        You've implemented normalization in Part 1 — the logic is the same.
-        Think about what PyTorch gives you when you divide a tensor by a scalar
-        tensor.
-    """
-    raise NotImplementedError("Implement tensor_normalize()")
-
-
-def tensor_matmul(A: torch.Tensor, B: torch.Tensor) -> torch.Tensor:
-    """Multiply two 2-D tensors (matrices) using the @ operator.
-
-    Args:
-        A: 2-D tensor with shape (m, k).
-        B: 2-D tensor with shape (k, n).
-
-    Returns:
-        2-D tensor with shape (m, n) — the matrix product.
-
-    Example:
-        >>> A = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
-        >>> B = torch.tensor([[5.0, 6.0], [7.0, 8.0]])
-        >>> tensor_matmul(A, B)
-        tensor([[19., 22.],
-                [43., 50.]])
-
-    Hint:
-        Check the reference card for how PyTorch handles matrix
-        multiplication.
-    """
-    raise NotImplementedError("Implement tensor_matmul()")
-
-
-def tensor_transpose(A: torch.Tensor) -> torch.Tensor:
-    """Return the transpose of a 2-D (or batched) tensor.
-
-    Args:
-        A: A tensor with at least 2 dimensions.
-
-    Returns:
-        The transposed tensor. For a 2-D matrix of shape (m, n), this has
-        shape (n, m).
-
-    Example:
-        >>> A = torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
-        >>> tensor_transpose(A)
-        tensor([[1., 4.],
-                [2., 5.],
-                [3., 6.]])
-
-    Hint:
-        Check the reference card — PyTorch tensors have a property for
-        transposing that works correctly for both 2-D and batched tensors.
-    """
-    raise NotImplementedError("Implement tensor_transpose()")
-
-
-def column_means(A: torch.Tensor) -> torch.Tensor:
-    """Compute the mean of each column of a matrix.
-
-    For a matrix with m rows and n columns, this returns a vector of
-    length n where entry j is the average of all values in column j.
-    This is equivalent to computing the mean across rows (dim=0).
-
-    Args:
-        A: A 2-D tensor of shape (m, n).
-
-    Returns:
-        A 1-D tensor of shape (n,) — the column-wise means.
-
-    Example:
-        >>> A = torch.tensor([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
-        >>> column_means(A)
-        tensor([3., 4.])  # (1+3+5)/3=3, (2+4+6)/3=4
-
-    Hint:
-        Think about which dimension to collapse to get one value per column.
-        Check the PyTorch cheat sheet for how dim values work.
-    """
-    raise NotImplementedError("Implement column_means()")
+    raise NotImplementedError("Implement polynomial_features()")
 
 
 def row_normalize(A: torch.Tensor) -> torch.Tensor:
     """Normalize each row of a matrix to unit length.
 
-    For a matrix with m rows, this produces a new matrix where every row
-    has Euclidean norm equal to 1. This is useful for comparing rows as
-    directions regardless of their magnitude — e.g., normalizing data
-    samples before computing cosine similarities.
+    For a matrix with m rows, returns a new matrix where every row
+    has Euclidean norm equal to 1.
 
     Args:
-        A: A 2-D tensor of shape (m, n).
+        A: 2-D tensor of shape (m, n).
 
     Returns:
-        A 2-D tensor of shape (m, n) where each row has norm 1.
+        2-D tensor of shape (m, n) where each row has norm 1.
 
     Raises:
-        ValueError: If any row of A is the zero vector (cannot be normalized).
+        ValueError: If any row of A is the zero vector.
 
     Example:
         >>> A = torch.tensor([[3.0, 4.0], [0.0, 2.0]])
@@ -400,9 +319,9 @@ def row_normalize(A: torch.Tensor) -> torch.Tensor:
                 [0.0000, 1.0000]])
 
     Hint:
-        Compute norms along the row dimension. When you try to divide A by the
-        result, pay attention to whether the shapes are compatible for
-        broadcasting — you may need to preserve a dimension.
+        Compute a norm for each row. When you divide A by the result,
+        think about whether the shapes are compatible — there is a
+        keyword argument that controls this.
     """
     raise NotImplementedError("Implement row_normalize()")
 
@@ -431,79 +350,77 @@ def cosine_similarity(u: torch.Tensor, v: torch.Tensor) -> float:
         >>> cosine_similarity(torch.tensor([1.0, 0.0]), torch.tensor([1.0, 0.0]))
         1.0
         >>> cosine_similarity(torch.tensor([1.0, 0.0]), torch.tensor([0.0, 1.0]))
-        0.0  # perpendicular
+        0.0
 
     Hint:
-        The formula is in the docstring. You have all the building blocks
-        from earlier in Part 2 — think about what each component of the
-        formula maps to in PyTorch. Don't forget to handle the zero-vector
-        case.
+        Each term in the formula maps to a PyTorch operation.
+        Handle the case where either input is the zero vector.
     """
     raise NotImplementedError("Implement cosine_similarity()")
 
 
-def gram_matrix(A: torch.Tensor) -> torch.Tensor:
-    """Compute the Gram matrix of A: G = A^T A.
+def pairwise_distances(A: torch.Tensor) -> torch.Tensor:
+    """Compute the pairwise Euclidean distance between every row of A.
 
-    The Gram matrix is always square (n x n if A has n columns) and
-    symmetric. Its (i, j) entry is the dot product of column i of A
-    with column j of A.
+    For a matrix with m rows, returns an (m, m) matrix where entry (i, j)
+    is the Euclidean distance between row i and row j of A.
 
-    Gram matrices appear throughout ML: in linear regression (the normal
-    equations involve X^T X), in kernel methods, and in style transfer.
-    You will use this exact operation again in HW03 when implementing
-    least-squares regression.
+    The diagonal will be all zeros (distance from a row to itself) and
+    the matrix will be symmetric.
 
     Args:
-        A: A 2-D tensor of shape (m, n).
+        A: 2-D tensor of shape (m, n).
 
     Returns:
-        A 2-D tensor of shape (n, n).
+        2-D tensor of shape (m, m).
 
     Example:
-        >>> A = torch.tensor([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
-        >>> gram_matrix(A)
-        tensor([[35., 44.],
-                [44., 56.]])
+        >>> A = torch.tensor([[0.0, 0.0], [3.0, 4.0]])
+        >>> pairwise_distances(A)
+        tensor([[0., 5.],
+                [5., 0.]])
 
     Hint:
-        You need the transpose of A and a matrix multiply. Think carefully
-        about the order: is it A @ A.mT or A.mT @ A? Check the output shape.
+        To compute the distance between every pair of rows, think about how
+        you would set up the subtraction so that all pairs are computed at
+        once. Subtraction of two differently-shaped tensors can broadcast —
+        what shapes would make row i of one copy and row j of the other copy
+        line up correctly for all i and j simultaneously?
+        Do not use torch.cdist.
     """
-    raise NotImplementedError("Implement gram_matrix()")
+    raise NotImplementedError("Implement pairwise_distances()")
 
 
-def solve_linear_system(A: torch.Tensor, b: torch.Tensor) -> torch.Tensor:
-    """Solve the linear system Ax = b for the unknown vector x.
+def least_squares(X: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
+    """Find the least-squares solution to the system Xw = y.
 
-    Given a square invertible matrix A and a right-hand-side vector b,
-    find x such that A @ x == b.
+    Given a design matrix X of shape (m, n) and target vector y of
+    shape (m,), find the weight vector w that minimizes ||Xw - y||^2.
 
-    This is the tensor equivalent of solving a system of linear equations:
-        a_00*x_0 + a_01*x_1 + ... = b_0
-        a_10*x_0 + a_11*x_1 + ... = b_1
-        ...
+    The solution satisfies the normal equations:
 
-    torch.linalg.solve(A, b) computes this efficiently using LU decomposition
-    — it is numerically more stable than computing the inverse of A directly
-    (i.e., do NOT use A.inverse() @ b).
+        X^T X w = X^T y
+
+    Do NOT solve by computing the inverse of X^T X. Use a dedicated
+    linear system solver — it is numerically more stable and faster.
 
     Args:
-        A: Square matrix of shape (n, n). Must be non-singular (invertible).
-        b: Right-hand-side vector of shape (n,) or matrix of shape (n, k).
+        X: 2-D tensor of shape (m, n), where m >= n and X has full column rank.
+        y: 1-D tensor of shape (m,).
 
     Returns:
-        Solution tensor x such that A @ x is close to b.
+        1-D tensor of shape (n,) — the weight vector w.
 
     Example:
-        >>> A = torch.tensor([[2.0, 1.0], [1.0, 3.0]])
-        >>> b = torch.tensor([5.0, 10.0])
-        >>> x = solve_linear_system(A, b)
-        >>> print(x)
-        tensor([1., 3.])  # 2(1) + 3 = 5 ✓ and 1 + 3(3) = 10 ✓
+        >>> X = torch.tensor([[1.0, 1.0], [1.0, 2.0], [1.0, 3.0]])
+        >>> y = torch.tensor([2.0, 3.0, 4.0])
+        >>> least_squares(X, y)
+        tensor([1., 1.])  # intercept=1, slope=1 (exact fit: y = 1 + x)
 
     Hint:
-        The docstring tells you the right function to use and why a more
-        obvious approach is discouraged. Read it carefully.
+        Build the left-hand side (X^T X) and right-hand side (X^T y) of
+        the normal equations using matrix operations. Then find a function
+        in torch.linalg that solves a linear system directly.
+        Do not use .inverse().
     """
-    raise NotImplementedError("Implement solve_linear_system()")
+    raise NotImplementedError("Implement least_squares()")

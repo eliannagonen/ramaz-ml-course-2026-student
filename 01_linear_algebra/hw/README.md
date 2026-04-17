@@ -39,20 +39,17 @@ Functions to implement:
 
 ### Part 2 — PyTorch Tensors (27 pts)
 
-Same operations, but implemented using PyTorch. No manual loops — use PyTorch
-operators and functions.
+Implement more advanced operations using PyTorch. No manual loops — express
+everything with PyTorch operators and tensor math. Each problem requires finding
+the right primitive and combining it with shape manipulation or multi-step logic.
 
 Functions to implement:
-- `tensor_dot_product`
-- `tensor_magnitude`
-- `tensor_normalize`
-- `tensor_matmul`
-- `tensor_transpose`
-- `column_means`
+- `batch_dot`
+- `polynomial_features`
 - `row_normalize`
 - `cosine_similarity`
-- `gram_matrix`
-- `solve_linear_system`
+- `pairwise_distances`
+- `least_squares`
 
 ### Math Exercises (graded separately)
 
@@ -110,28 +107,6 @@ so you know what to fix.
 
 ---
 
-## Part 3 — Reflection (2 pts, manually graded)
-
-After completing Parts 1 and 2, add answers to these questions as comments at
-the **bottom** of your `linear_algebra.py` file:
-
-1. In `column_means`, you pass `dim=0` to `torch.mean`. In your own words, what
-   does `dim=0` mean? Why does reducing along dimension 0 give you one value per
-   column rather than one value per row?
-
-2. `cosine_similarity` returns a value between -1 and 1. Give an example of
-   two vectors whose cosine similarity is exactly 0, and explain geometrically
-   what that means.
-
-Format your answers like this at the bottom of `linear_algebra.py`:
-```python
-# ── Reflection ────────────────────────────────────────────────────────────────
-# Q1: ...
-# Q2: ...
-```
-
----
-
 ## Submission
 
 1. Zip your `hw/` folder (include `linear_algebra.py` and nothing else you
@@ -150,6 +125,6 @@ Submit each part separately — two distinct Gradescope submissions.
 exercises.
 
 Part 1 is mostly straightforward once you understand the definitions — the
-challenge is translating the math notation into code precisely. Part 2 is
-shorter but requires learning how to express the same ideas using PyTorch's API.
-`solve_linear_system` is worth the most points; read its docstring carefully.
+challenge is translating the math notation into code precisely. Part 2 requires
+reading the PyTorch documentation and thinking carefully about tensor shapes.
+`least_squares` is worth the most points; read its docstring carefully.

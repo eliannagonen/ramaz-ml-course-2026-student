@@ -29,16 +29,12 @@ POINTS: dict[str, int] = {
     "TestMatrixMultiply": 5,
     "TestMatrixTranspose": 3,
     # Part 2: PyTorch Tensors (27 pts)
+    "TestBatchDot": 3,
+    "TestPolynomialFeatures": 5,
     "TestRowNormalize": 4,
-    "TestColumnMeans": 3,
-    "TestTensorDotProduct": 2,
-    "TestTensorMagnitude": 2,
-    "TestTensorNormalize": 2,
-    "TestTensorMatmul": 2,
-    "TestTensorTranspose": 1,
-    "TestCosineSimilarity": 5,
-    "TestGramMatrix": 3,
-    "TestSolveLinearSystem": 3,
+    "TestCosineSimilarity": 4,
+    "TestPairwiseDistances": 5,
+    "TestLeastSquares": 6,
 }
 
 SECTIONS: list[tuple[str, list[str]]] = [
@@ -59,16 +55,12 @@ SECTIONS: list[tuple[str, list[str]]] = [
     (
         "Part 2: PyTorch Tensors",
         [
+            "TestBatchDot",
+            "TestPolynomialFeatures",
             "TestRowNormalize",
-            "TestColumnMeans",
-            "TestTensorDotProduct",
-            "TestTensorMagnitude",
-            "TestTensorNormalize",
-            "TestTensorMatmul",
-            "TestTensorTranspose",
             "TestCosineSimilarity",
-            "TestGramMatrix",
-            "TestSolveLinearSystem",
+            "TestPairwiseDistances",
+            "TestLeastSquares",
         ],
     ),
 ]

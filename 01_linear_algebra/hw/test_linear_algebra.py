@@ -10,23 +10,19 @@ import pytest
 import torch
 
 from linear_algebra import (
-    column_means,
+    batch_dot,
     cosine_similarity,
     dot_product,
-    gram_matrix,
+    least_squares,
     matrix_add,
     matrix_multiply,
     matrix_transpose,
     matrix_vector_multiply,
     normalize_vector,
+    pairwise_distances,
+    polynomial_features,
     row_normalize,
     scalar_multiply,
-    solve_linear_system,
-    tensor_dot_product,
-    tensor_magnitude,
-    tensor_matmul,
-    tensor_normalize,
-    tensor_transpose,
     vector_add,
     vector_magnitude,
 )
@@ -329,6 +325,98 @@ class TestMatrixTranspose:
 
 
 @pytest.mark.pytorch
+class TestBatchDot:
+    def test_basic(self) -> None:
+        U = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
+        V = torch.tensor([[5.0, 6.0], [7.0, 8.0]])
+        result = batch_dot(U, V)
+        expected = torch.tensor([17.0, 53.0])
+        assert torch.allclose(result, expected, atol=1e-5), (
+            f"batch_dot([[1,2],[3,4]], [[5,6],[7,8]]) = [1*5+2*6, 3*7+4*8] = [17,53]; got {result}"
+        )
+
+    def test_output_shape(self) -> None:
+        U = torch.ones(5, 4)
+        V = torch.ones(5, 4)
+        result = batch_dot(U, V)
+        assert result.shape == (5,), (
+            f"batch_dot of (5,4) tensors should have shape (5,); got {result.shape}"
+        )
+
+    def test_orthogonal_rows(self) -> None:
+        U = torch.tensor([[1.0, 0.0], [0.0, 1.0]])
+        V = torch.tensor([[0.0, 1.0], [1.0, 0.0]])
+        result = batch_dot(U, V)
+        assert torch.allclose(result, torch.zeros(2), atol=1e-5), (
+            f"Orthogonal row pairs should give dot products of 0; got {result}"
+        )
+
+    def test_matches_row_dots(self) -> None:
+        # Verify against explicit dot products
+        U = torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
+        V = torch.tensor([[7.0, 8.0, 9.0], [1.0, 0.0, -1.0]])
+        result = batch_dot(U, V)
+        expected = torch.tensor(
+            [
+                1.0 * 7 + 2.0 * 8 + 3.0 * 9,  # 50
+                4.0 * 1 + 5.0 * 0 + 6.0 * -1,  # -2
+            ]
+        )
+        assert torch.allclose(result, expected, atol=1e-5), (
+            f"Row-wise dot products: expected {expected}; got {result}"
+        )
+
+    def test_returns_tensor(self) -> None:
+        result = batch_dot(torch.ones(2, 3), torch.ones(2, 3))
+        assert isinstance(result, torch.Tensor), (
+            f"Return type should be torch.Tensor, not {type(result).__name__}"
+        )
+
+
+@pytest.mark.pytorch
+class TestPolynomialFeatures:
+    def test_basic(self) -> None:
+        x = torch.tensor([2.0, 3.0])
+        result = polynomial_features(x, degree=2)
+        expected = torch.tensor([[1.0, 2.0, 4.0], [1.0, 3.0, 9.0]])
+        assert torch.allclose(result, expected, atol=1e-5), (
+            f"polynomial_features([2,3], degree=2) should be [[1,2,4],[1,3,9]]; got {result}"
+        )
+
+    def test_degree_zero(self) -> None:
+        x = torch.tensor([5.0, 7.0, 9.0])
+        result = polynomial_features(x, degree=0)
+        expected = torch.ones(3, 1)
+        assert result.shape == (3, 1), f"degree=0 should give shape (3,1); got {result.shape}"
+        assert torch.allclose(result, expected, atol=1e-5), (
+            f"degree=0: every entry should be x^0=1; got {result}"
+        )
+
+    def test_output_shape(self) -> None:
+        x = torch.arange(5, dtype=torch.float32)
+        result = polynomial_features(x, degree=3)
+        assert result.shape == (5, 4), (
+            f"polynomial_features(x, degree=3) for len-5 x should have shape (5,4); "
+            f"got {result.shape}"
+        )
+
+    def test_column_j_is_x_pow_j(self) -> None:
+        x = torch.tensor([2.0, 3.0, 4.0])
+        result = polynomial_features(x, degree=4)
+        for j in range(5):
+            expected_col = x**j
+            assert torch.allclose(result[:, j], expected_col, atol=1e-5), (
+                f"Column {j} should be x^{j}={expected_col}; got {result[:, j]}"
+            )
+
+    def test_returns_tensor(self) -> None:
+        result = polynomial_features(torch.tensor([1.0, 2.0]), degree=2)
+        assert isinstance(result, torch.Tensor), (
+            f"Return type should be torch.Tensor, not {type(result).__name__}"
+        )
+
+
+@pytest.mark.pytorch
 class TestRowNormalize:
     def test_rows_have_unit_norm(self) -> None:
         A = torch.tensor([[3.0, 4.0], [5.0, 12.0], [1.0, 0.0]])
@@ -366,174 +454,6 @@ class TestRowNormalize:
 
 
 @pytest.mark.pytorch
-class TestColumnMeans:
-    def test_basic(self) -> None:
-        A = torch.tensor([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
-        result = column_means(A)
-        expected = torch.tensor([3.0, 4.0])
-        assert torch.allclose(result, expected, atol=1e-5), (
-            f"column_means([[1,2],[3,4],[5,6]]) = [(1+3+5)/3, (2+4+6)/3] = [3,4]; got {result}"
-        )
-
-    def test_output_shape(self) -> None:
-        A = torch.ones(7, 4)
-        result = column_means(A)
-        assert result.shape == (4,), (
-            f"column_means of (7,4) tensor should have shape (4,); got {result.shape}"
-        )
-
-    def test_uniform_rows(self) -> None:
-        # If every row is the same, the column means equal that row
-        row = torch.tensor([2.0, 5.0, 9.0])
-        A = row.unsqueeze(0).expand(6, -1)
-        result = column_means(A)
-        assert torch.allclose(result, row, atol=1e-5), (
-            f"When all rows are identical, column_means should equal that row; got {result}"
-        )
-
-    def test_single_row(self) -> None:
-        A = torch.tensor([[3.0, 7.0, 1.0]])
-        result = column_means(A)
-        assert torch.allclose(result, torch.tensor([3.0, 7.0, 1.0]), atol=1e-5), (
-            f"Mean of a single row is the row itself; got {result}"
-        )
-
-    def test_returns_tensor(self) -> None:
-        result = column_means(torch.ones(3, 3))
-        assert isinstance(result, torch.Tensor), (
-            f"Return type should be torch.Tensor, not {type(result).__name__}"
-        )
-
-
-@pytest.mark.pytorch
-class TestTensorDotProduct:
-    def test_basic(self) -> None:
-        u = torch.tensor([1.0, 2.0, 3.0])
-        v = torch.tensor([4.0, 5.0, 6.0])
-        result = tensor_dot_product(u, v)
-        assert abs(result - 32.0) < 1e-5, f"dot([1,2,3], [4,5,6]) = 32; got {result}"
-
-    def test_orthogonal(self) -> None:
-        result = tensor_dot_product(torch.tensor([1.0, 0.0]), torch.tensor([0.0, 1.0]))
-        assert abs(result - 0.0) < 1e-5, f"Orthogonal unit vectors: dot product = 0; got {result}"
-
-    def test_returns_python_float(self) -> None:
-        result = tensor_dot_product(torch.tensor([1.0, 2.0]), torch.tensor([3.0, 4.0]))
-        assert isinstance(result, float), (
-            f"Return type should be Python float (via .item()); got {type(result).__name__}"
-        )
-
-
-@pytest.mark.pytorch
-class TestTensorMagnitude:
-    def test_three_four_five(self) -> None:
-        v = torch.tensor([3.0, 4.0])
-        result = tensor_magnitude(v)
-        assert abs(result - 5.0) < 1e-5, f"magnitude([3,4]) = 5; got {result}"
-
-    def test_unit_vector(self) -> None:
-        result = tensor_magnitude(torch.tensor([1.0, 0.0, 0.0]))
-        assert abs(result - 1.0) < 1e-5, f"Unit vector has magnitude 1; got {result}"
-
-    def test_zero_vector(self) -> None:
-        result = tensor_magnitude(torch.zeros(3))
-        assert abs(result - 0.0) < 1e-5, f"Zero vector has magnitude 0; got {result}"
-
-    def test_returns_python_float(self) -> None:
-        result = tensor_magnitude(torch.tensor([3.0, 4.0]))
-        assert isinstance(result, float), (
-            f"Return type should be Python float (via .item()); got {type(result).__name__}"
-        )
-
-
-@pytest.mark.pytorch
-class TestTensorNormalize:
-    def test_basic(self) -> None:
-        v = torch.tensor([3.0, 4.0])
-        result = tensor_normalize(v)
-        expected = torch.tensor([0.6, 0.8])
-        assert torch.allclose(result, expected, atol=1e-5), (
-            f"normalize([3,4]) should be [0.6, 0.8]; got {result}"
-        )
-
-    def test_result_has_unit_magnitude(self) -> None:
-        v = torch.tensor([1.0, 2.0, 3.0])
-        result = tensor_normalize(v)
-        norm = torch.linalg.norm(result).item()
-        assert abs(norm - 1.0) < 1e-5, f"Normalized vector should have magnitude 1; got {norm}"
-
-    def test_zero_vector_raises(self) -> None:
-        with pytest.raises(ValueError):
-            tensor_normalize(torch.zeros(3))
-
-    def test_returns_tensor(self) -> None:
-        result = tensor_normalize(torch.tensor([3.0, 4.0]))
-        assert isinstance(result, torch.Tensor), (
-            f"Return type should be torch.Tensor, not {type(result).__name__}"
-        )
-
-
-@pytest.mark.pytorch
-class TestTensorMatmul:
-    def test_two_by_two(self) -> None:
-        A = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
-        B = torch.tensor([[5.0, 6.0], [7.0, 8.0]])
-        result = tensor_matmul(A, B)
-        expected = torch.tensor([[19.0, 22.0], [43.0, 50.0]])
-        assert torch.allclose(result, expected, atol=1e-5), (
-            f"[[1,2],[3,4]] @ [[5,6],[7,8]] = [[19,22],[43,50]]; got {result}"
-        )
-
-    def test_identity(self) -> None:
-        identity = torch.eye(3)
-        A = torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]])
-        result = tensor_matmul(identity, A)
-        assert torch.allclose(result, A, atol=1e-5), f"Identity @ A should return A; got {result}"
-
-    def test_non_square(self) -> None:
-        A = torch.ones(2, 3)
-        B = torch.ones(3, 4)
-        result = tensor_matmul(A, B)
-        assert result.shape == (2, 4), f"(2x3) @ (3x4) should give shape (2,4); got {result.shape}"
-
-    def test_returns_tensor(self) -> None:
-        result = tensor_matmul(torch.eye(2), torch.eye(2))
-        assert isinstance(result, torch.Tensor), (
-            f"Return type should be torch.Tensor, not {type(result).__name__}"
-        )
-
-
-@pytest.mark.pytorch
-class TestTensorTranspose:
-    def test_two_by_three(self) -> None:
-        A = torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
-        result = tensor_transpose(A)
-        expected = torch.tensor([[1.0, 4.0], [2.0, 5.0], [3.0, 6.0]])
-        assert torch.allclose(result, expected, atol=1e-5), (
-            f"Transpose of 2x3 matrix should be 3x2; got {result}"
-        )
-
-    def test_shape(self) -> None:
-        A = torch.ones(3, 5)
-        result = tensor_transpose(A)
-        assert result.shape == (5, 3), (
-            f"Transposing (3,5) should give shape (5,3); got {result.shape}"
-        )
-
-    def test_double_transpose(self) -> None:
-        A = torch.tensor([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
-        assert torch.allclose(tensor_transpose(tensor_transpose(A)), A, atol=1e-5), (
-            "Transposing twice should recover the original tensor"
-        )
-
-    def test_returns_tensor(self) -> None:
-        result = tensor_transpose(torch.eye(3))
-        assert isinstance(result, torch.Tensor), (
-            f"Return type should be torch.Tensor, not {type(result).__name__}"
-        )
-
-
-@pytest.mark.pytorch
 class TestCosineSimilarity:
     def test_identical_vectors(self) -> None:
         u = torch.tensor([1.0, 2.0, 3.0])
@@ -559,7 +479,7 @@ class TestCosineSimilarity:
         )
 
     def test_known_value(self) -> None:
-        # [1, 0] vs [1, 1]/sqrt(2): angle is 45 degrees, cos(45) = sqrt(2)/2 ≈ 0.7071
+        # [1, 0] vs [1, 1]: angle = 45 degrees, cos(45) = 1/sqrt(2)
         u = torch.tensor([1.0, 0.0])
         v = torch.tensor([1.0, 1.0])
         result = cosine_similarity(u, v)
@@ -582,91 +502,90 @@ class TestCosineSimilarity:
 
 
 @pytest.mark.pytorch
-class TestGramMatrix:
-    def test_basic(self) -> None:
-        A = torch.tensor([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]])
-        result = gram_matrix(A)
-        expected = torch.tensor([[35.0, 44.0], [44.0, 56.0]])
+class TestPairwiseDistances:
+    def test_known_values(self) -> None:
+        A = torch.tensor([[0.0, 0.0], [3.0, 4.0]])
+        result = pairwise_distances(A)
+        expected = torch.tensor([[0.0, 5.0], [5.0, 0.0]])
         assert torch.allclose(result, expected, atol=1e-5), (
-            f"gram_matrix([[1,2],[3,4],[5,6]]) should be [[35,44],[44,56]]; got {result}"
+            f"pairwise_distances([[0,0],[3,4]]) should be [[0,5],[5,0]]; got {result}"
         )
 
-    def test_output_shape(self) -> None:
-        # A is (m, n) -> G should be (n, n)
-        A = torch.ones(5, 3)
-        result = gram_matrix(A)
-        assert result.shape == (3, 3), (
-            f"gram_matrix of (5,3) tensor should have shape (3,3); got {result.shape}"
+    def test_diagonal_is_zero(self) -> None:
+        A = torch.randn(4, 3)
+        result = pairwise_distances(A)
+        assert torch.allclose(result.diagonal(), torch.zeros(4), atol=1e-5), (
+            f"Diagonal of pairwise_distances should be all zeros; got {result.diagonal()}"
         )
 
     def test_symmetry(self) -> None:
-        A = torch.randn(4, 3)
-        result = gram_matrix(A)
+        A = torch.randn(5, 3)
+        result = pairwise_distances(A)
         assert torch.allclose(result, result.mT, atol=1e-5), (
-            "Gram matrix A^T A must be symmetric (G == G^T)"
+            "pairwise_distances must be symmetric: dist(i,j) == dist(j,i)"
         )
 
-    def test_identity_columns(self) -> None:
-        # If A is the 3x3 identity, A^T A = I
-        A = torch.eye(3)
-        result = gram_matrix(A)
-        assert torch.allclose(result, torch.eye(3), atol=1e-5), (
-            f"gram_matrix(I) should be I; got {result}"
+    def test_output_shape(self) -> None:
+        A = torch.ones(6, 4)
+        result = pairwise_distances(A)
+        assert result.shape == (6, 6), (
+            f"pairwise_distances of (6,4) tensor should have shape (6,6); got {result.shape}"
         )
 
     def test_returns_tensor(self) -> None:
-        result = gram_matrix(torch.ones(2, 2))
+        result = pairwise_distances(torch.eye(3))
         assert isinstance(result, torch.Tensor), (
             f"Return type should be torch.Tensor, not {type(result).__name__}"
         )
 
 
 @pytest.mark.pytorch
-class TestSolveLinearSystem:
-    def test_two_by_two(self) -> None:
-        # 2x + y = 5
-        # x + 3y = 10
-        # Solution: x=1, y=3
-        A = torch.tensor([[2.0, 1.0], [1.0, 3.0]])
-        b = torch.tensor([5.0, 10.0])
-        x = solve_linear_system(A, b)
-        assert x.shape == (2,), f"Solution should have shape (2,); got {x.shape}"
-        assert torch.allclose(x, torch.tensor([1.0, 3.0]), atol=1e-4), (
-            f"Solution to 2x+y=5, x+3y=10 should be [1, 3]; got {x}"
+class TestLeastSquares:
+    def test_exact_fit(self) -> None:
+        # Perfect linear data: y = 1 + 1*x
+        X = torch.tensor([[1.0, 1.0], [1.0, 2.0], [1.0, 3.0]])
+        y = torch.tensor([2.0, 3.0, 4.0])
+        w = least_squares(X, y)
+        expected = torch.tensor([1.0, 1.0])
+        assert torch.allclose(w, expected, atol=1e-4), (
+            f"For y=1+x, least_squares should return [1,1]; got {w}"
         )
 
-    def test_three_by_three(self) -> None:
-        # x + 2y + 3z = 14
-        # 2x + y + z = 7
-        # x + y + 2z = 9
-        # Solution: x=1, y=2, z=3
-        A = torch.tensor([[1.0, 2.0, 3.0], [2.0, 1.0, 1.0], [1.0, 1.0, 2.0]])
-        b = torch.tensor([14.0, 7.0, 9.0])
-        x = solve_linear_system(A, b)
-        expected = torch.tensor([1.0, 2.0, 3.0])
-        assert torch.allclose(x, expected, atol=1e-4), (
-            f"3x3 system: expected solution [1,2,3]; got {x}"
+    def test_output_shape(self) -> None:
+        X = torch.randn(10, 3)
+        y = torch.randn(10)
+        w = least_squares(X, y)
+        assert w.shape == (3,), (
+            f"least_squares with (10,3) X should return shape (3,); got {w.shape}"
         )
 
-    def test_solution_satisfies_ax_equals_b(self) -> None:
-        A = torch.tensor([[3.0, 1.0], [1.0, 2.0]])
-        b = torch.tensor([9.0, 8.0])
-        x = solve_linear_system(A, b)
-        residual = A @ x - b
-        assert torch.allclose(residual, torch.zeros(2), atol=1e-4), (
-            f"A @ x should equal b; residual was {residual}"
+    def test_satisfies_normal_equations(self) -> None:
+        # w minimizes ||Xw - y||^2, so X^T X w == X^T y
+        X = torch.tensor([[1.0, 2.0], [3.0, 4.0], [5.0, 6.0], [7.0, 8.0]])
+        y = torch.tensor([1.0, 2.0, 3.0, 4.0])
+        w = least_squares(X, y)
+        lhs = X.mT @ X @ w
+        rhs = X.mT @ y
+        assert torch.allclose(lhs, rhs, atol=1e-4), (
+            f"Solution should satisfy normal equations X^T X w = X^T y; lhs={lhs}, rhs={rhs}"
         )
 
-    def test_identity_system(self) -> None:
-        A = torch.eye(3)
-        b = torch.tensor([4.0, 5.0, 6.0])
-        x = solve_linear_system(A, b)
-        assert torch.allclose(x, b, atol=1e-5), f"I @ x = b implies x = b; got {x}"
+    def test_predictions_close_to_targets(self) -> None:
+        # Overdetermined but approximately linear data
+        X = torch.tensor([[1.0, 0.0], [1.0, 1.0], [1.0, 2.0], [1.0, 3.0]])
+        y = torch.tensor([0.5, 1.6, 2.4, 3.5])  # noisy y = 0.5 + x
+        w = least_squares(X, y)
+        predictions = X @ w
+        residuals = (predictions - y).abs().max().item()
+        assert residuals < 0.5, (
+            f"Predictions should be close to targets for nearly-linear data; "
+            f"max residual was {residuals:.4f}"
+        )
 
     def test_returns_tensor(self) -> None:
-        A = torch.tensor([[1.0, 0.0], [0.0, 1.0]])
-        b = torch.tensor([1.0, 2.0])
-        result = solve_linear_system(A, b)
+        X = torch.eye(3)
+        y = torch.tensor([1.0, 2.0, 3.0])
+        result = least_squares(X, y)
         assert isinstance(result, torch.Tensor), (
             f"Return type should be torch.Tensor, not {type(result).__name__}"
         )
