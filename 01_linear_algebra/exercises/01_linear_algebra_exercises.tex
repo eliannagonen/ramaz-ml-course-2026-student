@@ -1,0 +1,99 @@
+\documentclass[12pt]{article}
+
+% Standard math packages
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+% Other useful packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+
+\usepackage{tikz}
+
+% Box environments
+\usepackage{tcolorbox}
+\usepackage{xcolor}
+
+% Single accent color for all box types (2026 style)
+\definecolor{accent}{RGB}{52, 101, 164}
+
+\tcbset{
+  coursebox/.style={
+    colframe=accent, colback=accent!5!white,
+    colbacktitle=accent, coltitle=white,
+    boxrule=0.5pt, rounded corners,
+    fonttitle=\bfseries
+  }
+}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+\newtheorem{remark}{Remark}
+\newtheorem{example}{Example}
+
+\tcolorboxenvironment{definition}{coursebox}
+\tcolorboxenvironment{remark}{coursebox}
+\tcolorboxenvironment{example}{coursebox}
+
+% Set page margins
+\geometry{margin=1in}
+
+% Title information
+\title{Assignment 1: Linear Algebra}
+\author{Jack Gindi}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+Problems are from Boyd \& Vandenberghe, \textit{Introduction to Applied Linear Algebra}.
+A freely available PDF is online --- search for ``VMLS Boyd Vandenberghe.''
+Starred problems (*) are required. Others are optional but encouraged.
+
+\section{Vectors}
+\begin{itemize}
+    \item 1.3: Overloading*
+    \item 1.4: Periodic energy usage*
+    \item 1.5: Interpreting sparsity*
+    \item 1.6: Vector of differences*
+    \item 1.11: Word count and word histogram vectors*
+\end{itemize}
+
+\section{Norms and Distances}
+\begin{itemize}
+    \item 3.4: Norm identities*
+    \item 3.11: Neighboring electronic health records*
+\end{itemize}
+
+\section{Matrices}
+\begin{itemize}
+    \item 6.1: Matrix and vector notation*
+    \item 6.2: Matrix notation*
+    \item 6.6: Matrix-vector multiplication*
+    \item 7.3: Trimming a vector (Optional)
+\end{itemize}
+
+\section{Matrix-Matrix Multiplication}
+\begin{itemize}
+    \item 10.2: ones matrix*
+    \item 10.3: Matrix sizes*
+    \item 10.17: Patients and symptoms*
+\end{itemize}
+
+\section{Linear Equations}
+\begin{itemize}
+    \item 8.6: Linear functions*
+    \item 8.9: Required nutrients (Optional)
+\end{itemize}
+
+\section{Programming Assignment}
+
+See the \texttt{hw/} folder for the coding portion of this module.
+Run \texttt{uv run python score.py} to check your autograded score.
+
+\end{document}
