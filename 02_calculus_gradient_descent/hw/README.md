@@ -108,10 +108,7 @@ Submit each part separately — two distinct Gradescope submissions.
 
 ---
 
-## Time estimate
-
-**2–3 hours** for the coding portion. Budget additional time for the math
-problem set.
+## Notes on difficulty
 
 Part 1 is mostly direct translation: once you know the derivative formula,
 writing it in Python is straightforward. Part 2 is about learning the autograd

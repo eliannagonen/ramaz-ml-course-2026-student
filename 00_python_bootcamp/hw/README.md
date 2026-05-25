@@ -1,6 +1,5 @@
 # HW00 — Python Bootcamp
 
-**Estimated time:** 4–6 hours  
 **Prerequisites:** Basic Python familiarity (variables, loops, conditionals, functions)
 
 This assignment reviews the Python patterns we'll rely on throughout the course — lists,

@@ -119,10 +119,7 @@ Submit each part separately — two distinct Gradescope submissions.
 
 ---
 
-## Time estimate
-
-**4–6 hours** for the coding portion. Budget additional time for the math
-exercises.
+## Notes on difficulty
 
 Part 1 is mostly straightforward once you understand the definitions — the
 challenge is translating the math notation into code precisely. Part 2 requires
