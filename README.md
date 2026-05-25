@@ -6,7 +6,7 @@ own folder (`00_python_bootcamp/`, `01_linear_algebra/`, …). Inside each modul
 problem set.
 
 You will work entirely in **GitHub Codespaces** (browser-based VS Code, no local
-installation needed) and submit on **Gradescope** (linked from Schoology).
+installation needed) and submit on **Gradescope**.
 
 ---
 
@@ -71,9 +71,14 @@ any new assignment folders.
 
 ## Submitting on Gradescope
 
-Gradescope is linked from **Schoology** — open Schoology, click the assignment,
-and the Gradescope page opens through a single sign-on link. (If you don't see
-the link, ask the teacher to enroll you.)
+The teacher will give you a **course entry code** at the start of the year.
+
+1. Go to [gradescope.com](https://www.gradescope.com) and create an account
+   (or log in if you already have one) using your school email.
+2. Click **Add Course** and enter the course code.
+3. The course appears on your dashboard; every assignment is listed there.
+
+If you don't see the course or an assignment, ask the teacher.
 
 **Most assignments have two separate Gradescope submissions:**
 
