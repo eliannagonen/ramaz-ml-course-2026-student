@@ -71,14 +71,9 @@ any new assignment folders.
 
 ## Submitting on Gradescope
 
-The teacher will give you a **course entry code** at the start of the year.
-
-1. Go to [gradescope.com](https://www.gradescope.com) and create an account
-   (or log in if you already have one) using your school email.
-2. Click **Add Course** and enter the course code.
-3. The course appears on your dashboard; every assignment is listed there.
-
-If you don't see the course or an assignment, ask the teacher.
+You're already enrolled in the Gradescope course. Log in at
+[gradescope.com](https://www.gradescope.com) — the course is on your
+dashboard, with every assignment listed.
 
 **Most assignments have two separate Gradescope submissions:**
 
