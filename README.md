@@ -83,20 +83,16 @@ Source Control for saving work) applies the same way locally.
 
 ## Getting new assignments (during the year)
 
-The teacher releases new assignments by pushing them to the upstream repo. To
-pull them into your fork, click **Sync fork** at the top of your fork's page on
-GitHub. That's it — one click, no terminal command.
+Two steps:
 
-Then bring the changes into your working copy (Codespace or local) and install
-any new dependencies:
-
-```bash
-git pull origin main
-bash setup.sh
-```
-
-In a Codespace, just run `bash setup.sh` — `git pull` is done for you by the
-sync.
+1. **On GitHub** (in the browser): on your fork's page, click **Sync fork →
+   Update branch**. This pulls the teacher's new commits into your fork.
+2. **In your terminal** (Codespace or local), run:
+   ```bash
+   bash setup.sh
+   ```
+   This pulls the synced changes into your working copy and installs
+   dependencies for any new assignment folders.
 
 ---
 
