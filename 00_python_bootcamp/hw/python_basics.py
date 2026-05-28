@@ -39,8 +39,18 @@ def most_frequent(items: list) -> object:
         >>> most_frequent(['a', 'b', 'a', 'c', 'a'])
         'a'
     """
-    if len(list) == 0:
+    if len(items) == 0:
         raise ValueError("Items is empty")
+
+    best_item = items[0]
+    best_count = 0
+
+    for item in items:
+        if items.count(item) > best_count:
+            best_item = item
+            best_count = items.count(item)
+
+    return best_item
 
 
 def running_average(numbers: list[float]) -> list[float]:
@@ -56,7 +66,16 @@ def running_average(numbers: list[float]) -> list[float]:
         >>> running_average([])
         []
     """
-    raise NotImplementedError("Implement running_average()")
+    total = 0
+    count = 0
+    averages = []
+
+    for number in numbers:
+        total += number
+        count += 1
+        averages.append(total / count)
+
+    return averages
 
 
 def chunk(items: list, size: int) -> list[list]:
@@ -72,7 +91,13 @@ def chunk(items: list, size: int) -> list[list]:
         >>> chunk([], 4)
         []
     """
-    raise NotImplementedError("Implement chunk()")
+
+    result = []
+
+    for i in range(0, len(items), size):
+        result.append(items[i : i + size])
+
+    return result
 
 
 def rotate(items: list, k: int) -> list:
@@ -89,7 +114,11 @@ def rotate(items: list, k: int) -> list:
         >>> rotate([1, 2, 3], 4)
         [2, 3, 1]
     """
-    raise NotImplementedError("Implement rotate()")
+    if len(items) == 0:
+        return items
+
+    k = k % len(items)
+    return items[k:] + items[:k]
 
 
 def run_length_encode(items: list) -> list[tuple]:
@@ -103,7 +132,16 @@ def run_length_encode(items: list) -> list[tuple]:
         >>> run_length_encode([])
         []
     """
-    raise NotImplementedError("Implement run_length_encode()")
+    if len(items) == 0:
+        return []
+
+    seen = []
+    unique_items = []
+    for item in items:
+        if item not in seen:
+            appearances = items.count(item)
+            seen.append(item)
+            unique_items.append((appearances, item))
 
 
 def sliding_window(items: list, size: int) -> list[list]:
