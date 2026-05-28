@@ -4,6 +4,7 @@ Complete the functions below. Each function has a docstring describing
 what it should do, along with examples. Run `uv run pytest` to check
 your work, and `uv run python score.py` to see your current grade.
 """
+
 from __future__ import annotations
 
 from typing import Callable
@@ -38,7 +39,8 @@ def most_frequent(items: list) -> object:
         >>> most_frequent(['a', 'b', 'a', 'c', 'a'])
         'a'
     """
-    raise NotImplementedError("Implement most_frequent()")
+    if len(list) == 0:
+        raise ValueError("Items is empty")
 
 
 def running_average(numbers: list[float]) -> list[float]:
