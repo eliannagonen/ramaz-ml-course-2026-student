@@ -135,13 +135,20 @@ def run_length_encode(items: list) -> list[tuple]:
     if len(items) == 0:
         return []
 
-    seen = []
-    unique_items = []
+    count = 0
+    current_item = items[0]
+    item_groups = []
+
     for item in items:
-        if item not in seen:
-            appearances = items.count(item)
-            seen.append(item)
-            unique_items.append((appearances, item))
+        if item == current_item:
+            count += 1
+        else:
+            item_groups.append((count, current_item))
+            count = 1
+            current_item = item
+            
+    item_groups.append((count, current_item))
+    return item_groups
 
 
 def sliding_window(items: list, size: int) -> list[list]:
@@ -160,7 +167,16 @@ def sliding_window(items: list, size: int) -> list[list]:
         >>> sliding_window([], 2)
         []
     """
-    raise NotImplementedError("Implement sliding_window()")
+    conseq_windows = []
+
+    if len(items) < size:
+        return []
+    
+    for i in range(len(items) - size + 1):
+        
+    
+    return conseq_windows
+    
 
 
 # ── Part 2: Dictionaries ──────────────────────────────────────────────────────
