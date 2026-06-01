@@ -146,7 +146,7 @@ def run_length_encode(items: list) -> list[tuple]:
             item_groups.append((count, current_item))
             count = 1
             current_item = item
-            
+
     item_groups.append((count, current_item))
     return item_groups
 
@@ -171,12 +171,11 @@ def sliding_window(items: list, size: int) -> list[list]:
 
     if len(items) < size:
         return []
-    
+
     for i in range(len(items) - size + 1):
-        conseq_windows.append(items[i:size+i])
+        conseq_windows.append(items[i : size + i])
 
     return conseq_windows
-    
 
 
 # ── Part 2: Dictionaries ──────────────────────────────────────────────────────
@@ -191,7 +190,16 @@ def count_occurrences(items: list) -> dict:
         >>> count_occurrences([])
         {}
     """
-    raise NotImplementedError("Implement count_occurrences()")
+
+    count_items = {}
+
+    for item in items:
+        if item not in count_items:
+            count_items[item] = 1
+        else:
+            count_items[item] += 1
+
+    return count_items
 
 
 def invert_dict(d: dict) -> dict:
