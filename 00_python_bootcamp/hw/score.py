@@ -4,13 +4,15 @@ Shows your current score grouped by section. A section earns its full
 points only when ALL tests in that section pass.
 
 Examples:
-    uv run python score.py            # score everything
-    uv run python score.py lists      # only Part 1 (Lists)
-    uv run python score.py dicts      # only Part 2 (Dicts)
-    uv run python score.py sets       # only Part 3 (Sets)
-    uv run python score.py hof        # only Part 4 (Higher-order functions)
-    uv run python score.py classes    # only Part 5 (Classes)
-    uv run python score.py analysis   # only Part 6 (Analysis)
+    uv run python score.py                        # score everything
+    uv run python score.py lists                  # only Part 1 (Lists)
+    uv run python score.py dicts                  # only Part 2 (Dicts)
+    uv run python score.py sets                   # only Part 3 (Sets)
+    uv run python score.py hof                    # only Part 4 (Higher-order functions)
+    uv run python score.py classes                # only Part 5 (Classes)
+    uv run python score.py analysis               # only Part 6 (Analysis)
+    uv run python score.py --zip                  # build hw00_submission.zip for Gradescope
+    uv run python score.py --gradescope <path>    # write Gradescope results.json
 """
 
 from __future__ import annotations
@@ -18,6 +20,7 @@ from __future__ import annotations
 import json
 import subprocess
 import sys
+import zipfile
 from pathlib import Path
 
 # Points per test class. Every test in a class must pass to earn credit.
@@ -103,6 +106,25 @@ SECTIONS: list[tuple[str, list[str]]] = [
 ]
 
 REPORT_FILE = Path(".report.json")
+
+SUBMISSION_FILES: list[str] = ["python_basics.py", "analysis.py", "writeup.md"]
+ZIP_NAME = "hw00_submission.zip"
+
+
+def build_zip() -> None:
+    """Build the submission zip with the right files at the right level."""
+    missing = [f for f in SUBMISSION_FILES if not Path(f).exists()]
+    if missing:
+        print("Cannot build the submission zip — missing file(s):")
+        for f in missing:
+            print(f"  - {f}")
+        print("Run this command from the hw/ directory, with all files present.")
+        sys.exit(1)
+    with zipfile.ZipFile(ZIP_NAME, "w", zipfile.ZIP_DEFLATED) as zf:
+        for f in SUBMISSION_FILES:
+            zf.write(f)
+    print(f"Created {ZIP_NAME} containing: {', '.join(SUBMISSION_FILES)}")
+    print("Upload this file to Gradescope (HW00).")
 
 
 def run_pytest(marker_filter: str | None = None) -> None:
@@ -192,7 +214,69 @@ def print_score(by_class: dict[str, dict]) -> None:
     print()
 
 
+def write_gradescope_results(by_class: dict[str, dict], output_path: str) -> None:
+    """Write Gradescope results.json from collected test results."""
+    tests: list[dict] = []
+    total = 0
+    autograded_total = sum(POINTS.values())
+
+    for _, classes in SECTIONS:
+        for cls in classes:
+            pts = POINTS[cls]
+            info = by_class.get(cls, {})
+            passed = info.get("passed", 0)
+            n_tests = info.get("total", 0)
+            all_pass = n_tests > 0 and passed == n_tests
+            score = pts if all_pass else 0
+            total += score
+
+            if all_pass:
+                detail = f"All {passed} test(s) passed."
+            elif n_tests == 0:
+                detail = (
+                    "No tests ran — make sure the function is implemented "
+                    "and does not raise NotImplementedError."
+                )
+            else:
+                detail = f"{passed}/{n_tests} test(s) passed."
+                failures = info.get("failures", [])
+                if failures:
+                    detail += "\nFailing: " + ", ".join(failures[:5])
+
+            tests.append(
+                {
+                    "score": score,
+                    "max_score": pts,
+                    "name": cls.removeprefix("Test"),
+                    "output": detail,
+                    "visibility": "visible",
+                }
+            )
+
+    results = {
+        "score": total,
+        "output": f"Autograded score: {total}/{autograded_total}  (writeup graded separately)",
+        "tests": tests,
+    }
+    Path(output_path).write_text(json.dumps(results, indent=2))
+    print(f"Wrote {output_path}  ({total}/{autograded_total})")
+
+
 def main() -> None:
+    if len(sys.argv) >= 2 and sys.argv[1] == "--zip":
+        build_zip()
+        return
+
+    if len(sys.argv) >= 3 and sys.argv[1] == "--gradescope":
+        run_pytest()
+        if not REPORT_FILE.exists():
+            print("Error: could not generate test report.")
+            sys.exit(1)
+        report = load_report()
+        by_class = collect_results(report)
+        write_gradescope_results(by_class, sys.argv[2])
+        return
+
     marker = sys.argv[1] if len(sys.argv) > 1 else None
     run_pytest(marker)
 

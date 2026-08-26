@@ -8,6 +8,7 @@ dependencies = ["pandas>=2.0"]
 dev = [
     "pytest>=8.0",
     "pytest-json-report>=1.5",
+    "pytest-timeout>=2.3",
     "ruff>=0.4",
     "ty>=0.0.1a0",
 ]
@@ -31,3 +32,4 @@ markers = [
     "analysis: pandas data analysis",
 ]
 addopts = "-v --tb=short --strict-markers"
+timeout = 30

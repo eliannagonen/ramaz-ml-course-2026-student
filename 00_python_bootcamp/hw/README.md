@@ -8,6 +8,19 @@ analysis with pandas.
 
 ---
 
+## Submission
+
+Run this from the `hw/` directory:
+
+```bash
+uv run python score.py --zip
+```
+
+It creates `hw00_submission.zip` with exactly the right files inside.
+Upload that one file to Gradescope.
+
+---
+
 ## Setup
 
 Open this folder in a GitHub Codespace (recommended) or your local editor.
@@ -41,13 +54,13 @@ Open this folder in a GitHub Codespace (recommended) or your local editor.
 
 ## Parts
 
-### Part 1: Python Basics (`python_basics.py`) — 53 pts
+### Part 1: Python Basics (`python_basics.py`) — 56 pts
 
-Implement functions and class methods across five sections:
+Implement 18 functions and 2 classes across five sections:
 
 | Section | Topic | Points |
 |---------|-------|--------|
-| 1.1 | Lists | 14 |
+| 1.1 | Lists | 17 |
 | 1.2 | Dicts | 13 |
 | 1.3 | Sets | 5 |
 | 1.4 | Higher-order functions | 11 |
@@ -73,7 +86,7 @@ Use the printed output to answer the five questions in `writeup.md`.
 
 | File | What to do |
 |------|------------|
-| `python_basics.py` | Implement all functions (each one raises `NotImplementedError` — replace it with your code) |
+| `python_basics.py` | Implement all functions (look for `raise NotImplementedError` — replace with your code) |
 | `analysis.py` | Implement all five pandas functions |
 | `writeup.md` | Answer the five analysis questions in full sentences |
 
@@ -109,10 +122,3 @@ You can do this entirely from the VS Code sidebar — no terminal needed:
 Your work is now saved to your GitHub fork. Get into the habit of doing this whenever
 you finish a work session.
 
----
-
-## Submitting
-
-1. Commit and push your work (see above)
-2. Download your `hw/` folder: in the VS Code file explorer, right-click `hw/` → **Download**
-3. Submit the downloaded `.zip` on Gradescope
