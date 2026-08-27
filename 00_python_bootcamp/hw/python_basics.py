@@ -320,7 +320,16 @@ def find_duplicates(items: list) -> set:
         >>> find_duplicates([])
         set()
     """
-    raise NotImplementedError("Implement find_duplicates()")
+    duplicates = set()
+    seen = set()
+
+    for element in items:
+        if element in seen:
+            duplicates.add(element)
+        else:
+            seen.add(element)
+
+    return duplicates
 
 
 def jaccard_similarity(a: set, b: set) -> float:
@@ -336,8 +345,14 @@ def jaccard_similarity(a: set, b: set) -> float:
         >>> jaccard_similarity(set(), set())
         0.0
     """
-    raise NotImplementedError("Implement jaccard_similarity()")
 
+    union = a | b
+    intersection = a & b
+
+    if len(union) == 0:
+        return 0.0
+
+    return len(intersection) / len(union)
 
 # ── Part 4: Higher-order functions ────────────────────────────────────────────
 
