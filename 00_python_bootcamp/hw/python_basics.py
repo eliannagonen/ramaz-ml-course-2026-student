@@ -24,7 +24,13 @@ def flatten(nested: list[list]) -> list:
         >>> flatten([])
         []
     """
-    raise NotImplementedError("Implement flatten()")
+
+    result = []
+    for sublist in nested:
+        for item in sublist:
+            result.append(item)
+
+    return result
 
 
 def most_frequent(items: list) -> object:
@@ -193,11 +199,11 @@ def count_occurrences(items: list) -> dict:
 
     count_items = {}
 
-    for item in items:
-        if item not in count_items:
-            count_items[item] = 1
+    for element in items:
+        if element not in count_items:
+            count_items[element] = 1
         else:
-            count_items[item] += 1
+            count_items[element] += 1
 
     return count_items
 
@@ -209,8 +215,12 @@ def invert_dict(d: dict) -> dict:
         >>> invert_dict({'a': 1, 'b': 2})
         {1: 'a', 2: 'b'}
     """
-    raise NotImplementedError("Implement invert_dict()")
 
+    new_dict = {}
+    for key, value in d.items():
+        new_dict[value] = key
+
+    return new_dict
 
 def group_by(items: list[dict], key: str) -> dict[str, list[dict]]:
     """Group a list of dicts by the value at the given key.
@@ -227,8 +237,18 @@ def group_by(items: list[dict], key: str) -> dict[str, list[dict]]:
         >>> len(result['HR'])
         1
     """
-    raise NotImplementedError("Implement group_by()")
+    final_dict = {}
 
+    for record in items:
+        group_value = record[key]
+
+        if group_value not in final_dict:
+            final_dict[group_value] = []
+        
+        final_dict[group_value].append(record)
+
+    return final_dict
+            
 
 def deep_get(d: dict, path: str, default: object = None) -> object:
     """Retrieve a value from a nested dict using a dot-separated key path.
@@ -242,13 +262,26 @@ def deep_get(d: dict, path: str, default: object = None) -> object:
         -1
         >>> deep_get({'x': 10}, 'y')  # returns None (default)
     """
-    raise NotImplementedError("Implement deep_get()")
 
+    keys = path.split('.')
+
+    current = d
+    for key in keys:
+        if not isinstance(current, dict):
+            return default
+        
+        if key not in current:
+            return default
+        else:
+            current = current[key]
+
+    return current
+        
 
 def two_sum(nums: list[int], target: int) -> tuple[int, int] | None:
     """Return indices (i, j) where nums[i] + nums[j] == target, with i < j.
 
-    Return None if no such pair exists.
+    ReturnNone if no such pair exists.
 
     Hint: There is an elegant O(n) solution using a dict. As you scan through
     nums, ask: "have I already seen the number I need to pair with this one?"
@@ -261,8 +294,17 @@ def two_sum(nums: list[int], target: int) -> tuple[int, int] | None:
         >>> two_sum([1, 2, 3], 100)
         None
     """
-    raise NotImplementedError("Implement two_sum()")
 
+    seen = {}
+
+    for i, num in enumerate(nums):
+        complement = target - num
+        if complement in seen:
+            return (seen[complement], i)
+        else:
+            seen[num] = i
+
+    return None
 
 # ── Part 3: Sets ──────────────────────────────────────────────────────────────
 
@@ -425,3 +467,4 @@ class Gradebook:
     def class_average(self) -> float:
         """Return the mean of all student averages. Returns 0.0 if empty."""
         raise NotImplementedError("Implement Gradebook.class_average()")
+ 
