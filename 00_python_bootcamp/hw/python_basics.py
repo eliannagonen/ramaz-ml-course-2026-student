@@ -366,7 +366,8 @@ def apply_twice(f: Callable, x: object) -> object:
         >>> apply_twice(str.upper, 'hello')
         'HELLO'
     """
-    raise NotImplementedError("Implement apply_twice()")
+
+    return f(f(x))
 
 
 def make_multiplier(n: float) -> Callable[[float], float]:
@@ -382,8 +383,11 @@ def make_multiplier(n: float) -> Callable[[float], float]:
         >>> triple(4)
         12.0
     """
-    raise NotImplementedError("Implement make_multiplier()")
 
+    def multiplier(x):
+        return x * n
+
+    return multiplier
 
 def pipeline(*funcs: Callable) -> Callable:
     """Return a single function that applies each func in sequence (left to right).
@@ -399,7 +403,16 @@ def pipeline(*funcs: Callable) -> Callable:
         >>> pipeline()(42)
         42
     """
-    raise NotImplementedError("Implement pipeline()")
+
+    def apply_funcs(x):
+        if len(funcs) == 0:
+            return x
+        result = x
+        for func in funcs:
+            result = func(result)
+        return result
+
+    return apply_funcs
 
 
 def memoize(f: Callable) -> Callable:
@@ -422,7 +435,18 @@ def memoize(f: Callable) -> Callable:
         >>> cached(4)   # should not increment call_count
         16
     """
-    raise NotImplementedError("Implement memoize()")
+
+    cache = {}
+
+    def cached_f(x):
+        if x in cache:
+            return cache[x]
+        else:
+            cache[x] = f(x)
+            return cache[x]
+
+    return cached_f
+
 
 
 # ── Part 5: Classes ───────────────────────────────────────────────────────────
