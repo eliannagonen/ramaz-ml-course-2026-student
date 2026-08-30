@@ -33,8 +33,16 @@ def load_songs(path: Path) -> pd.DataFrame:
         >>> df.dtypes["year"]
         dtype('int64')
     """
-    raise NotImplementedError("Implement load_songs()")
 
+    df = pd.read_csv(path)
+
+    df["year"] = df["year"].astype(int)
+    df["weeks_on_chart"] = df["weeks_on_chart"].astype(int)
+    df["peak_position"] = df["peak_position"].astype(int)
+    df["streams_millions"] = df["streams_millions"].astype(float)
+
+    return df
+    
 
 def top_charting_songs(df: pd.DataFrame, n: int = 10) -> pd.DataFrame:
     """Return the top n songs by streams_millions, sorted in descending order.
@@ -53,7 +61,9 @@ def top_charting_songs(df: pd.DataFrame, n: int = 10) -> pd.DataFrame:
         >>> top["streams_millions"].is_monotonic_decreasing
         True
     """
-    raise NotImplementedError("Implement top_charting_songs()")
+
+    df = df.sort_values("streams_millions", ascending = False)
+    return df.head(n)
 
 
 def avg_weeks_by_genre(df: pd.DataFrame) -> dict[str, float]:
@@ -70,8 +80,12 @@ def avg_weeks_by_genre(df: pd.DataFrame) -> dict[str, float]:
         >>> isinstance(avgs, dict)
         True
     """
-    raise NotImplementedError("Implement avg_weeks_by_genre()")
+    average = df.groupby("genre")["weeks_on_chart"].mean()
+    result = {}
+    for genre, avg in average.items():
+        result[genre] = float(avg)
 
+    return result
 
 def most_streamed_artist(df: pd.DataFrame) -> str:
     """Return the name of the artist with the highest total streams_millions.
@@ -89,8 +103,10 @@ def most_streamed_artist(df: pd.DataFrame) -> str:
         >>> isinstance(artist, str)
         True
     """
-    raise NotImplementedError("Implement most_streamed_artist()")
+    totals = df.groupby("artist")["streams_millions"].sum()
+    top_artist = str(totals.idxmax())
 
+    return top_artist
 
 def hits_per_year(df: pd.DataFrame, max_position: int = 10) -> dict[int, int]:
     """Count songs with peak_position <= max_position, grouped by year.
@@ -109,7 +125,17 @@ def hits_per_year(df: pd.DataFrame, max_position: int = 10) -> dict[int, int]:
         >>> all(isinstance(k, int) for k in hits.keys())
         True
     """
-    raise NotImplementedError("Implement hits_per_year()")
+
+    is_a_hit = df["peak_position"] <= max_position
+    hit_songs = df[is_a_hit]
+    counts = hit_songs.groupby("year").size()
+
+    result = {}
+    for year, count in counts.items():
+        result[year] = int(count)
+
+    return result
+
 
 
 # ── Main: print results for writeup.md ────────────────────────────────────────

@@ -26,6 +26,7 @@ def flatten(nested: list[list]) -> list:
     """
 
     result = []
+    
     for sublist in nested:
         for item in sublist:
             result.append(item)
