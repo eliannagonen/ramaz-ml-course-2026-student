@@ -13,7 +13,7 @@ below. Replace each `[your answer here]` with your response.
 
 **Which genre averaged the most weeks on the Billboard chart?**
 
-[your answer here]
+Afrobeats with 30 weeks. 
 
 ---
 
@@ -21,7 +21,7 @@ below. Replace each `[your answer here]` with your response.
 
 **Who was the most-streamed artist in the dataset (by total streams across all their songs)?**
 
-[your answer here]
+Taylor Swift with 6560M total streams. 
 
 ---
 
@@ -29,7 +29,7 @@ below. Replace each `[your answer here]` with your response.
 
 **Which year had the most top-10 hits (songs that peaked at position 10 or better)?**
 
-[your answer here]
+2024 with 26 hits.
 
 ---
 
